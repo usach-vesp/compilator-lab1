@@ -1,15 +1,17 @@
 package com.compiler.template;
 
 
+import com.compiler.machine.Robot;
+
 import java.util.HashMap;
 
 public interface ActionMachine {
 
-    public HashMap standard(HashMap<String, String> robot, String letter);
+    public Robot base(String letter);
 
     public void union();
 
-    public HashMap intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine);
+    public Robot intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine);
 
     public void closure();
 
