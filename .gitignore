@@ -1,0 +1,8 @@
+# .idea is folder create automatically by intellij idea
+.idea
+
+# out is when intellij idea compile java project
+out
+
+# mac always generaty .DS_Store
+.DS_Store
