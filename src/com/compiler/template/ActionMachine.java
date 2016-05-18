@@ -11,9 +11,9 @@ public interface ActionMachine {
 
     public void union();
 
-    public Robot intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine);
+    public Robot intersection(Robot firstMachine, Robot secondMachine);
 
-    public void closure();
+    public Robot closure(String letter);
 
     public void remove();
 
