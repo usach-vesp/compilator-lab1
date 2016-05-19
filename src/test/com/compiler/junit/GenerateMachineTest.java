@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -37,11 +34,10 @@ public class GenerateMachineTest extends GenerateMachine {
     public void base() throws Exception {
         // 0: [ø, a]
         this.robot = generateMachine.base("a");
-        assertEquals(this.robot.getStates().get(0).get(0), "ø");
-        assertEquals(this.robot.getStates().get(0).get(1), "a");
+        assertEquals(this.robot.getTransitions().get(0), "ø");
+        assertEquals(this.robot.getTransitions().get(1), "a");
         assertEquals(this.robot.getStateInitial(), "ø");
         assertEquals(this.robot.getStateFinal(), "a");
-        assertEquals(this.robot.getStates().size(), 1);
         assertEquals(this.robot.getTransitions().size(), 2);
     }
 
@@ -52,7 +48,11 @@ public class GenerateMachineTest extends GenerateMachine {
 
     @Test
     public void intersection() throws Exception {
-
+        Robot firstMachine;
+        Robot secondMachine;
+        firstMachine = generateMachine.base("a");
+        secondMachine = generateMachine.base("b");
+        generateMachine.intersection(firstMachine, secondMachine);
     }
 
     @Test

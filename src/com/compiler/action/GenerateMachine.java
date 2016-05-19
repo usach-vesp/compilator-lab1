@@ -4,11 +4,12 @@ package com.compiler.action;
 import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 public class GenerateMachine implements ActionMachine{
+
+
 
     @Override
     public Robot base(String letter) {
@@ -16,9 +17,10 @@ public class GenerateMachine implements ActionMachine{
         * A => ->O->O
         */
         Robot robot = new Robot();
-        robot.addTransitions(0, "ø");
-        robot.addTransitions(1, letter);
-        robot.assignTransition(0, robot.getTransitions());
+        ArrayList<String> transition = new ArrayList<>();
+        transition.add(0, "ø");
+        transition.add(1, letter);
+        robot.assignRowTransition(0, transition);
         robot.setStateInitial("ø");
         robot.setStateFinal(letter);
         return robot;
@@ -71,17 +73,15 @@ public class GenerateMachine implements ActionMachine{
 
     }
 
-    private HashMap copyMachine(HashMap<String, String> transition, HashMap<String, String> finalRobot){
-        for (String temporal: transition.keySet()){
-            finalRobot.put(temporal, transition.get(temporal));
-        }
-        return finalRobot;
-    }
-
     private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
         Robot robot = new Robot();
-        for(ArrayList column: firstMachine.getStates()){
-            System.out.print(column);
+        for(ArrayList row: firstMachine.getTransitions()){
+            robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
+        }
+        robot.assignRightEpsilon(secondMachine.getTransitions().get(0).size() - 1);
+        for(ArrayList row: secondMachine.getTransitions()){
+            robot.assignLeftEpsilon(secondMachine.getSizeColumn());
+            robot.assignColumnTransition(row.subList(1, row.size()));
         }
         return robot;
     }
