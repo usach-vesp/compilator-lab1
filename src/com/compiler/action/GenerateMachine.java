@@ -1,21 +1,28 @@
 package com.compiler.action;
 
 
+import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+
 
 public class GenerateMachine implements ActionMachine{
 
+
+
     @Override
-    public HashMap standard(HashMap<String, String> robot, String letter) {
+    public Robot base(String letter) {
         /*
         * A => ->O->O
         */
-        robot.put("ø", letter);
-        robot.put(letter, "ø");
-        this.initialState(robot, "ø");
-        this.finalState(robot, letter);
+        Robot robot = new Robot();
+        ArrayList<String> transition = new ArrayList<>();
+        transition.add(0, "ø");
+        transition.add(1, letter);
+        robot.assignRowTransition(0, transition);
+        robot.setStateInitial("ø");
+        robot.setStateFinal(letter);
         return robot;
     }
 
@@ -29,33 +36,25 @@ public class GenerateMachine implements ActionMachine{
     }
 
     @Override
-    public HashMap intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine) {
+    public Robot intersection(Robot firstMachine, Robot secondMachine) {
         /*
         * AB => ->O->aO->bO
         */
-        HashMap<String, String> robot = new HashMap<>();
-        String stateFinal = firstMachine.get("final");
-        String stateInitial = secondMachine.get("initial");
-        for (String temporal: firstMachine.keySet()){
-            robot.put(temporal, firstMachine.get(temporal));
-        }
-        robot.put(stateFinal, stateInitial);
-        for (String temporal: secondMachine.keySet()){
-            robot.put(temporal, secondMachine.get(temporal));
-        }
-        robot.put("initial", firstMachine.get("initial"));
-        robot.put("final", secondMachine.get("final"));
+        Robot robot = this.generateOneMachine(firstMachine, secondMachine);;
+        robot.setStateInitial(firstMachine.getStateInitial());
+        robot.setStateFinal(secondMachine.getStateFinal());
         return robot;
     }
 
     @Override
-    public void closure() {
+    public Robot closure(String letter) {
         /*
         *                  <-e
         * (A)* => e->Oe->eO->aO->eO->eO
         *                  e->
         */
-
+        Robot robot = new Robot();
+        return robot;
     }
 
     @Override
@@ -63,18 +62,21 @@ public class GenerateMachine implements ActionMachine{
 
     }
 
-    private HashMap finalState(HashMap<String, String> robot, String finalState) {
-        robot.put("final", finalState);
-        return robot;
-    }
-
-    private HashMap initialState(HashMap<String, String> robot, String initialState) {
-        robot.put("initial", initialState);
-        return robot;
-    }
-
     @Override
     public void numberState() {
 
+    }
+
+    private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
+        Robot robot = new Robot();
+        for(ArrayList row: firstMachine.getTransitions()){
+            robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
+        }
+        robot.assignRightEpsilon(secondMachine.getTransitions().get(0).size() - 1);
+        for(ArrayList row: secondMachine.getTransitions()){
+            robot.assignLeftEpsilon(secondMachine.getSizeColumn());
+            robot.assignColumnTransition(row.subList(1, row.size()));
+        }
+        return robot;
     }
 }
