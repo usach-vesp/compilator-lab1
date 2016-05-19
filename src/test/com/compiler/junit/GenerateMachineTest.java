@@ -32,11 +32,12 @@ public class GenerateMachineTest extends GenerateMachine {
     public void base() throws Exception {
         // 0: [ø, a]
         this.robot = generateMachine.base("a");
-        assertEquals(this.robot.getTransitions().get(0), "ø");
-        assertEquals(this.robot.getTransitions().get(1), "a");
+        assertEquals(this.robot.getTransitions().get(0).get(0), "ø");
+        assertEquals(this.robot.getTransitions().get(0).get(1), "a");
         assertEquals(this.robot.getStateInitial(), "ø");
         assertEquals(this.robot.getStateFinal(), "a");
-        assertEquals(this.robot.getTransitions().size(), 2);
+        assertEquals(this.robot.getTransitions().size(), 1);
+        assertEquals(this.robot.getTransitions().get(0).size(), 2);
     }
 
     @Test
