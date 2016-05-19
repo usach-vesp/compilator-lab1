@@ -40,15 +40,9 @@ public class GenerateMachine implements ActionMachine{
         /*
         * AB => ->O->aO->bO
         */
-        Robot robot = new Robot();
-        this.generateOneMachine(firstMachine, secondMachine);
-//        String stateFinal = firstMachine.get("final");
-//        String stateInitial = secondMachine.get("initial");
-//        this.copyMachine(firstMachine, robot.getRobot());
-//        this.copyMachine(secondMachine, robot.getRobot());
-//        robot.add_transitions(stateFinal, stateInitial);
-//        robot.initialState(firstMachine.get("initial"));
-//        robot.finalState(secondMachine.get("final"));
+        Robot robot = this.generateOneMachine(firstMachine, secondMachine);;
+        robot.setStateInitial(firstMachine.getStateInitial());
+        robot.setStateFinal(secondMachine.getStateFinal());
         return robot;
     }
 

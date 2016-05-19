@@ -6,26 +6,18 @@ import java.util.List;
 
 public class Robot {
 
-    private ArrayList<ArrayList<String>> states;
     private ArrayList<ArrayList<String>> transitions;
     private String stateInitial;
     private String stateFinal;
-    private Integer sizeRow;
-    private Integer sizeColumn;
+    private int sizeRow;
+    private int sizeColumn;
 
     public Robot(){
-        this.states = new ArrayList<ArrayList<String>>();
         this.transitions = new ArrayList<ArrayList<String>>();
         this.stateInitial = "";
         this.stateFinal = "";
-    }
-
-    public ArrayList<ArrayList<String>> getStates() {
-        return states;
-    }
-
-    public void setStates(ArrayList<ArrayList<String>> states) {
-        this.states = states;
+        this.sizeRow = 0;
+        this.sizeColumn = 0;
     }
 
     public ArrayList<ArrayList<String>> getTransitions() {
@@ -52,19 +44,19 @@ public class Robot {
         this.stateFinal = stateFinal;
     }
 
-    public Integer getSizeRow() {
+    public int getSizeRow() {
         return sizeRow;
     }
 
-    public void setSizeRow(Integer sizeRow) {
+    public void setSizeRow(int sizeRow) {
         this.sizeRow = sizeRow;
     }
 
-    public Integer getSizeColumn() {
+    public int getSizeColumn() {
         return sizeColumn;
     }
 
-    public void setSizeColumn(Integer sizeColumn) {
+    public void setSizeColumn(int sizeColumn) {
         this.sizeColumn = sizeColumn;
     }
 
@@ -73,7 +65,7 @@ public class Robot {
         this.sizeColumn = this.transitions.get(0).size();
     }
 
-    public void assignRowTransition(Integer index, ArrayList transitions){
+    public void assignRowTransition(int index, ArrayList transitions){
         this.addTransition(index);
         this.transitions.add(index, transitions);
         this.syncSize();
@@ -84,7 +76,7 @@ public class Robot {
         this.syncSize();
     }
 
-    public void assignRightEpsilon(Integer sizeForEpsilon){
+    public void assignRightEpsilon(int sizeForEpsilon){
         String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
         ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
         for (ArrayList row: this.getTransitions()){
@@ -93,13 +85,13 @@ public class Robot {
         this.syncSize();
     }
 
-    public void assignLeftEpsilon(Integer sizeForEpsilon){
+    public void assignLeftEpsilon(int sizeForEpsilon){
         String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
         ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
         this.transitions.add(this.transitions.size(), epsilonArray);
     }
 
-    private void addTransition(Integer index){
+    private void addTransition(int index){
         if (this.getTransitions().size() < index){
             this.getTransitions().add(index, new ArrayList<String>());
         }

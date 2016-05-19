@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -14,19 +15,16 @@ public class GenerateMachineTest extends GenerateMachine {
 
     private static GenerateMachine generateMachine = new GenerateMachine();
     private Robot robot;
-    private ArrayList<ArrayList<String>> states;
     private ArrayList<String> transitions;
 
     @Before
     public void setUp() throws Exception {
         robot = new Robot();
-        states = new ArrayList<ArrayList<String>>();
         transitions  = new ArrayList<>();
     }
 
     @After
     public void tearDown() throws Exception {
-        states.clear();
         transitions.clear();
     }
 
@@ -52,7 +50,13 @@ public class GenerateMachineTest extends GenerateMachine {
         Robot secondMachine;
         firstMachine = generateMachine.base("a");
         secondMachine = generateMachine.base("b");
-        generateMachine.intersection(firstMachine, secondMachine);
+        robot = generateMachine.intersection(firstMachine, secondMachine);
+        assertEquals(robot.getStateInitial(), "ø");
+        assertEquals(robot.getStateFinal(), "b");
+        assertEquals(robot.getSizeColumn(), 3);
+        assertEquals(robot.getSizeRow(), 2);
+        assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
     }
 
     @Test
