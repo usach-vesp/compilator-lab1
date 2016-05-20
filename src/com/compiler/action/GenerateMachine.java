@@ -61,14 +61,18 @@ public class GenerateMachine implements ActionMachine{
         *                  e->
         */
         Robot robot = new Robot();
-        ArrayList<String> firstRow = new ArrayList<String>(Arrays.asList("ø", "ε", "ø", "ε"));
-        ArrayList<String> lastRow = new ArrayList<String>(Arrays.asList("ø", "ø", "ø", "ø"));
+        ArrayList<String> firstRow = new ArrayList<String>(Arrays.asList("ø", "ε"));
+        ArrayList<String> lastRow = new ArrayList<String>();
         robot.assignRowTransition(0, firstRow);
-        robot.assignLeftEpsilon(2);
+        robot.assignRightEpsilonToAll(machine.getTransitions().size() - 1);
+        robot.getTransitions().get(0).add("ε");
+        for (int i = 0; i < machine.getSizeRow() - 1; i++){
+            robot.assignLeftEpsilon(2 + i);
+        }
         this.closureIntersection(robot, machine, 1, 2);
-        robot.assignRightEpsilon(robot.getTransitions().get(0).size() - robot.getTransitions().get(1).size());
-        robot.assignRowTransition(2, firstRow);
-        robot.assignRowTransition(3, lastRow);
+        robot.assignRowTransition(robot.getSizeRow(), firstRow);
+        robot.assignLeftEpsilon(robot.getSizeRow() + 1);
+        robot.syncSize();
         return robot;
     }
 
@@ -112,16 +116,17 @@ public class GenerateMachine implements ActionMachine{
 
     private void addRightEpsilonIfNecessary(Robot robot, int size){
         if (size > 0){
-            robot.assignRightEpsilon(size - 1);
+            robot.assignRightEpsilonToAll(size - 1);
         }
     }
 
     private int closureIntersection(Robot robot, Robot machine, int row, int column){
         if (robot.getTransitions().size() > row){
             robot.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
+            robot.syncSize();
+            robot.assignRightEpsilonToRow(robot.getSizeColumn() - robot.getTransitions().get(row).size(), row);
             return this.closureIntersection(robot, machine, row+1, column+1);
         }
-        robot.syncSize();
         return -1;
     }
 }
