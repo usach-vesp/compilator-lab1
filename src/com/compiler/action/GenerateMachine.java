@@ -5,6 +5,8 @@ import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class GenerateMachine implements ActionMachine{
@@ -52,33 +54,21 @@ public class GenerateMachine implements ActionMachine{
     }
 
     @Override
-    public Robot closure(String letter) {
+    public Robot closure(Robot machine) {
         /*
         *                  <-e
         * (A)* => e->Oe->eO->aO->eO->eO
         *                  e->
         */
         Robot robot = new Robot();
-        robot.addTransition(0);
-        robot.getTransitions().get(0).add(0, "ø");
-        robot.getTransitions().get(0).add(1, "ε");
-        robot.getTransitions().get(0).add(2, "ø");
-        robot.getTransitions().get(0).add(3, "ε");
-        robot.addTransition(1);
-        robot.getTransitions().get(1).add(0, "ø");
-        robot.getTransitions().get(1).add(1, "ø");
-        robot.getTransitions().get(1).add(2, letter);
-        robot.getTransitions().get(1).add(3, "ø");
-        robot.addTransition(2);
-        robot.getTransitions().get(2).add(0, "ø");
-        robot.getTransitions().get(2).add(1, "ε");
-        robot.getTransitions().get(2).add(2, "ø");
-        robot.getTransitions().get(2).add(3, "ε");
-        robot.addTransition(3);
-        robot.getTransitions().get(3).add(0, "ø");
-        robot.getTransitions().get(3).add(1, "ø");
-        robot.getTransitions().get(3).add(2, "ø");
-        robot.getTransitions().get(3).add(3, "ø");
+        ArrayList<String> firstRow = new ArrayList<String>(Arrays.asList("ø", "ε", "ø", "ε"));
+        ArrayList<String> lastRow = new ArrayList<String>(Arrays.asList("ø", "ø", "ø", "ø"));
+        robot.assignRowTransition(0, firstRow);
+        robot.assignLeftEpsilon(2);
+        this.closureIntersection(robot, machine, 1, 2);
+        robot.assignRightEpsilon(robot.getTransitions().get(0).size() - robot.getTransitions().get(1).size());
+        robot.assignRowTransition(2, firstRow);
+        robot.assignRowTransition(3, lastRow);
         return robot;
     }
 
@@ -94,13 +84,9 @@ public class GenerateMachine implements ActionMachine{
 
     private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
         Robot robot = new Robot();
-        for(ArrayList row: firstMachine.getTransitions().subList(0, firstMachine.getSizeRow() - 1)){
-            robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
-        }
-        System.out.print(robot.getTransitions());
-        if (secondMachine.getTransitions().get(0).size() > 0){
-            robot.assignRightEpsilon(secondMachine.getTransitions().get(0).size() - 1);
-        }
+
+        this.copyFirstMachine(robot, firstMachine);
+        this.addRightEpsilonIfNecessary(robot, secondMachine.getTransitions().get(0).size());
         for(ArrayList row: secondMachine.getTransitions()){
             robot.assignLeftEpsilon(secondMachine.getSizeColumn());
             robot.assignColumnTransition(row.subList(1, row.size()));
@@ -108,9 +94,34 @@ public class GenerateMachine implements ActionMachine{
         return robot;
     }
 
-    private void copyFirstMachine(Robot firstMachine, Robot robot){
-        for(ArrayList row: firstMachine.getTransitions().subList(0, firstMachine.getSizeRow() - 1)){
+    private void copyFirstMachine(Robot robot, Robot firstMachine){
+        for(ArrayList row: this.subListFromMachine(firstMachine.getSizeRow(), firstMachine.getTransitions())){
             robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
         }
+    }
+
+    private List<ArrayList<String>> subListFromMachine(int sizeRow, ArrayList<ArrayList<String>> list){
+        List<ArrayList<String>> subList;
+        if (sizeRow - 1 != 0){
+            subList = list.subList(0, sizeRow - 1);
+        }else {
+            subList = list.subList(0, sizeRow);
+        }
+        return subList;
+    }
+
+    private void addRightEpsilonIfNecessary(Robot robot, int size){
+        if (size > 0){
+            robot.assignRightEpsilon(size - 1);
+        }
+    }
+
+    private int closureIntersection(Robot robot, Robot machine, int row, int column){
+        if (robot.getTransitions().size() > row){
+            robot.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
+            return this.closureIntersection(robot, machine, row+1, column+1);
+        }
+        robot.syncSize();
+        return -1;
     }
 }

@@ -79,7 +79,7 @@ public class Robot {
     public void assignRightEpsilon(int sizeForEpsilon){
         String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
         ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
-        for (ArrayList row: this.getTransitions()){
+        for (ArrayList row: this.listForRightEpsilon()){
             this.getTransitions().get(this.getTransitions().indexOf(row)).addAll(epsilonArray);
         }
         this.syncSize();
@@ -96,4 +96,15 @@ public class Robot {
             this.transitions.add(index, new ArrayList<String>());
         }
     }
+
+    private List<ArrayList<String>> listForRightEpsilon(){
+        List<ArrayList<String>> subList;
+        if (this.sizeRow != 1) {
+            if (this.transitions.get(0).size() != this.transitions.get(1).size()) {
+                return this.transitions.subList(1, this.transitions.size());
+            }
+        }
+        return this.transitions;
+    }
+
 }

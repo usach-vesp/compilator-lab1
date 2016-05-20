@@ -13,7 +13,7 @@ public interface ActionMachine {
 
     public Robot intersection(Robot firstMachine, Robot secondMachine);
 
-    public Robot closure(String letter);
+    public Robot closure(Robot machine);
 
     public void remove();
 
