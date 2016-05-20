@@ -60,7 +60,7 @@ public class Robot {
         this.sizeColumn = sizeColumn;
     }
 
-    private void syncSize(){
+    public void syncSize(){
         this.sizeRow = this.transitions.size();
         this.sizeColumn = this.transitions.get(0).size();
     }
@@ -91,9 +91,9 @@ public class Robot {
         this.transitions.add(this.transitions.size(), epsilonArray);
     }
 
-    private void addTransition(int index){
-        if (this.getTransitions().size() < index){
-            this.getTransitions().add(index, new ArrayList<String>());
+    public void addTransition(int index){
+        if (this.transitions.size() < index){
+            this.transitions.add(index, new ArrayList<String>());
         }
     }
 }

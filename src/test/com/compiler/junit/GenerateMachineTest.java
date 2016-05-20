@@ -34,9 +34,11 @@ public class GenerateMachineTest extends GenerateMachine {
         this.robot = generateMachine.base("a");
         assertEquals(this.robot.getTransitions().get(0).get(0), "ø");
         assertEquals(this.robot.getTransitions().get(0).get(1), "a");
+        assertEquals(this.robot.getTransitions().get(1).get(0), "ø");
+        assertEquals(this.robot.getTransitions().get(1).get(1), "ø");
         assertEquals(this.robot.getStateInitial(), "ø");
         assertEquals(this.robot.getStateFinal(), "a");
-        assertEquals(this.robot.getTransitions().size(), 1);
+        assertEquals(this.robot.getTransitions().size(), 2);
         assertEquals(this.robot.getTransitions().get(0).size(), 2);
     }
 
@@ -55,14 +57,25 @@ public class GenerateMachineTest extends GenerateMachine {
         assertEquals(robot.getStateInitial(), "ø");
         assertEquals(robot.getStateFinal(), "b");
         assertEquals(robot.getSizeColumn(), 3);
-        assertEquals(robot.getSizeRow(), 2);
+        assertEquals(robot.getSizeRow(), 3);
         assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
         assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø"), robot.getTransitions().get(2));
     }
 
     @Test
     public void closure() throws Exception{
-
+        Robot firstMachine;
+        Robot secondMachine = new Robot();
+        firstMachine = generateMachine.base("a");
+        ArrayList<String> a = new ArrayList<>();
+        a.add(0, "ø");
+        a.add(1, "ε");
+        a.add(2, "ø");
+        a.add(3, "ε");
+        secondMachine.assignRowTransition(0, a);
+        robot = generateMachine.intersection(secondMachine, firstMachine);
+        System.out.print(robot.getTransitions());
     }
 
 }

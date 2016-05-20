@@ -17,12 +17,17 @@ public class GenerateMachine implements ActionMachine{
         * A => ->O->O
         */
         Robot robot = new Robot();
-        ArrayList<String> transition = new ArrayList<>();
-        transition.add(0, "ø");
-        transition.add(1, letter);
-        robot.assignRowTransition(0, transition);
+        ArrayList<String> transitionOne = new ArrayList<>();
+        ArrayList<String> transitionTwo = new ArrayList<>();
+        transitionOne.add(0, "ø");
+        transitionOne.add(1, letter);
+        transitionTwo.add(0, "ø");
+        transitionTwo.add(1, "ø");
+        robot.assignRowTransition(0, transitionOne);
+        robot.assignRowTransition(1, transitionTwo);
         robot.setStateInitial("ø");
         robot.setStateFinal(letter);
+        robot.syncSize();
         return robot;
     }
 
@@ -54,6 +59,26 @@ public class GenerateMachine implements ActionMachine{
         *                  e->
         */
         Robot robot = new Robot();
+        robot.addTransition(0);
+        robot.getTransitions().get(0).add(0, "ø");
+        robot.getTransitions().get(0).add(1, "ε");
+        robot.getTransitions().get(0).add(2, "ø");
+        robot.getTransitions().get(0).add(3, "ε");
+        robot.addTransition(1);
+        robot.getTransitions().get(1).add(0, "ø");
+        robot.getTransitions().get(1).add(1, "ø");
+        robot.getTransitions().get(1).add(2, letter);
+        robot.getTransitions().get(1).add(3, "ø");
+        robot.addTransition(2);
+        robot.getTransitions().get(2).add(0, "ø");
+        robot.getTransitions().get(2).add(1, "ε");
+        robot.getTransitions().get(2).add(2, "ø");
+        robot.getTransitions().get(2).add(3, "ε");
+        robot.addTransition(3);
+        robot.getTransitions().get(3).add(0, "ø");
+        robot.getTransitions().get(3).add(1, "ø");
+        robot.getTransitions().get(3).add(2, "ø");
+        robot.getTransitions().get(3).add(3, "ø");
         return robot;
     }
 
@@ -69,14 +94,23 @@ public class GenerateMachine implements ActionMachine{
 
     private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
         Robot robot = new Robot();
-        for(ArrayList row: firstMachine.getTransitions()){
+        for(ArrayList row: firstMachine.getTransitions().subList(0, firstMachine.getSizeRow() - 1)){
             robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
         }
-        robot.assignRightEpsilon(secondMachine.getTransitions().get(0).size() - 1);
+        System.out.print(robot.getTransitions());
+        if (secondMachine.getTransitions().get(0).size() > 0){
+            robot.assignRightEpsilon(secondMachine.getTransitions().get(0).size() - 1);
+        }
         for(ArrayList row: secondMachine.getTransitions()){
             robot.assignLeftEpsilon(secondMachine.getSizeColumn());
             robot.assignColumnTransition(row.subList(1, row.size()));
         }
         return robot;
+    }
+
+    private void copyFirstMachine(Robot firstMachine, Robot robot){
+        for(ArrayList row: firstMachine.getTransitions().subList(0, firstMachine.getSizeRow() - 1)){
+            robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
+        }
     }
 }
