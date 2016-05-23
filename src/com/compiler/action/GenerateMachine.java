@@ -4,6 +4,7 @@ package com.compiler.action;
 import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ public class GenerateMachine implements ActionMachine{
         /*
         * AB => ->O->aO->bO
         */
-        Robot robot = this.generateOneMachine(firstMachine, secondMachine);;
+        Robot robot = this.generateOneMachine(firstMachine, secondMachine);
         robot.setStateInitial(firstMachine.getStateInitial());
         robot.setStateFinal(secondMachine.getStateFinal());
         return robot;
@@ -61,8 +62,7 @@ public class GenerateMachine implements ActionMachine{
         *                  e->
         */
         Robot robot = new Robot();
-        ArrayList<String> firstRow = new ArrayList<String>(Arrays.asList("ø", "ε"));
-        ArrayList<String> lastRow = new ArrayList<String>();
+        ArrayList<String> firstRow = new ArrayList<>(Arrays.asList("ø", "ε"));
         robot.assignRowTransition(0, firstRow);
         robot.assignRightEpsilonToAll(machine.getTransitions().size() - 1);
         robot.getTransitions().get(0).add("ε");
