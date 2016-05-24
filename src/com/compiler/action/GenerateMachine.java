@@ -4,7 +4,6 @@ package com.compiler.action;
 import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +34,21 @@ public class GenerateMachine implements ActionMachine{
     }
 
     @Override
-    public void union() {
+    public Robot union(ArrayList<Robot> machines) {
         /*
         * A + b => O ->O->O
         *            ->O->O
         */
-
+        Robot robot = new Robot();
+        ArrayList<Integer> sizesMachines = new ArrayList();
+        robot.assignLeftEpsilon(1);
+        for (Robot machine: machines){
+            sizesMachines.add(robot.createUnionMachine(machine));
+        }
+        robot.assignRightEpsilonToRow(1, 0);
+        robot.squareUnionMachine();
+        robot.createLastTransitionUnion(sizesMachines);
+        return robot;
     }
 
     @Override

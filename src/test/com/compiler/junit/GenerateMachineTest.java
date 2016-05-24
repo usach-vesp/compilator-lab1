@@ -44,7 +44,17 @@ public class GenerateMachineTest extends GenerateMachine {
 
     @Test
     public void union() {
-
+        Robot firstMachine = generateMachine.base("a");
+        Robot secondMachine = generateMachine.base("b");
+        robot = generateMachine.union(new ArrayList(Arrays.asList(firstMachine, secondMachine)));
+        assertEquals(robot.getSizeRow(), 6);
+        assertEquals(robot.getSizeColumn(), 6);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
     }
 
     @Test
@@ -96,7 +106,6 @@ public class GenerateMachineTest extends GenerateMachine {
     public void TwoClosureIntersection() throws Exception{
         Robot firstMachine = generateMachine.closure(generateMachine.base("a"));
         Robot secondMachine = generateMachine.closure(generateMachine.base("b"));
-        System.out.println("after this -----");
         robot = generateMachine.intersection(firstMachine, secondMachine);
         assertEquals(robot.getSizeRow(), 7);
         assertEquals(robot.getSizeColumn(), 7);

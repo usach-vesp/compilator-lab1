@@ -91,10 +91,12 @@ public class Robot {
     }
 
     public void assignRightEpsilonToRow(int sizeForEpsilon, int position){
-        String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
-        ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
-        this.transitions.get(position).addAll(epsilonArray);
-        this.syncSize();
+        if (sizeForEpsilon != 0){
+            String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
+            ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
+            this.transitions.get(position).addAll(epsilonArray);
+            this.syncSize();
+        }
     }
 
     public void assignLeftEpsilon(int sizeForEpsilon){
@@ -103,7 +105,34 @@ public class Robot {
         this.transitions.add(this.transitions.size(), epsilonArray);
     }
 
-    public void addTransition(int index){
+    public int createUnionMachine(Robot machine){
+        this.copyForUnionMachine(machine.getTransitions(), this.getTransitions().size());
+        this.getTransitions().get(0).add("ε");
+        int sizeLastPosition = this.getTransitions().get(this.getTransitions().size() - 1).size();
+        this.assignRightEpsilonToRow(sizeLastPosition - this.getTransitions().get(0).size(), 0);
+        this.syncSize();
+        return machine.getTransitions().size();
+    }
+
+    public void squareUnionMachine(){
+        int index = 0;
+        for (ArrayList row : this.getTransitions()){
+            this.assignRightEpsilonToRow(this.getSizeColumn() - row.size(), index);
+            index++;
+        }
+    }
+
+    public void createLastTransitionUnion(ArrayList<Integer> sizesMachines){
+        int finalStates = 0;
+        for (int finalState : sizesMachines){
+            finalStates += finalState;
+            this.getTransitions().get(finalStates).set(this.getSizeColumn() - 1, "ε");
+        }
+        this.assignLeftEpsilon(this.getSizeColumn());
+        this.syncSize();
+    }
+
+    private void addTransition(int index){
         if (this.transitions.size() < index){
             this.transitions.add(index, new ArrayList<String>());
         }
@@ -117,6 +146,14 @@ public class Robot {
             }
         }
         return this.transitions;
+    }
+
+    private void copyForUnionMachine(ArrayList<ArrayList<String>> list, int index){
+        for (ArrayList subList: list){
+            this.assignLeftEpsilon(this.getTransitions().get(0).size());
+            this.getTransitions().get(index).addAll(subList);
+            index++;
+        }
     }
 
 }
