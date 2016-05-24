@@ -154,6 +154,11 @@ public class Robot {
         }
     }
 
+    public void setStatesInitialFinal(){
+        this.setStateInitial("0");
+        this.setStateFinal(String.valueOf(this.getSizeRow()));
+    }
+
     private void addTransition(int index){
         if (this.transitions.size() < index){
             this.transitions.add(index, new ArrayList<String>());

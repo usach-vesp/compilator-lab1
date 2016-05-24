@@ -212,4 +212,14 @@ public class RobotTest {
         assertEquals(robot.getTransitions().get(0).get(1), "a");
     }
 
+    @Test
+    public void setStatesInitialFinal() throws Exception{
+        ArrayList arrayList = new ArrayList(Arrays.asList("A", "B"));
+        robot.assignRowTransition(0, arrayList);
+        robot.syncSize();
+        robot.setStatesInitialFinal();
+        assertEquals(robot.getStateInitial(), "0");
+        assertEquals(robot.getStateFinal(), "1");
+    }
+
 }

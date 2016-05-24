@@ -15,8 +15,4 @@ public interface ActionMachine {
 
     public Robot closure(Robot machine);
 
-    public void remove();
-
-    public void numberState();
-
 }

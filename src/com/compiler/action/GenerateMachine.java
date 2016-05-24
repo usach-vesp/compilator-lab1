@@ -26,9 +26,8 @@ public class GenerateMachine implements ActionMachine{
         transitionTwo.add(1, "ø");
         robot.assignRowTransition(0, transitionOne);
         robot.assignRowTransition(1, transitionTwo);
-        robot.setStateInitial("ø");
-        robot.setStateFinal(letter);
         robot.syncSize();
+        robot.setStatesInitialFinal();
         return robot;
     }
 
@@ -47,6 +46,7 @@ public class GenerateMachine implements ActionMachine{
         robot.assignRightEmptyToRow(1, 0);
         robot.squareUnionMachine();
         robot.createLastTransitionUnion(sizesMachines);
+        robot.setStatesInitialFinal();
         return robot;
     }
 
@@ -58,6 +58,7 @@ public class GenerateMachine implements ActionMachine{
         Robot robot = this.generateOneMachine(firstMachine, secondMachine);
         robot.setStateInitial(firstMachine.getStateInitial());
         robot.setStateFinal(secondMachine.getStateFinal());
+        robot.setStatesInitialFinal();
         return robot;
     }
 
@@ -80,17 +81,8 @@ public class GenerateMachine implements ActionMachine{
         robot.assignRowTransition(robot.getSizeRow(), firstRow);
         robot.assignLeftEmpty(robot.getSizeRow() + 1);
         robot.syncSize();
+        robot.setStatesInitialFinal();
         return robot;
-    }
-
-    @Override
-    public void remove() {
-
-    }
-
-    @Override
-    public void numberState() {
-
     }
 
     private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
