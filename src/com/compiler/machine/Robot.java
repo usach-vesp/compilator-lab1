@@ -76,40 +76,40 @@ public class Robot {
         this.syncSize();
     }
 
-    public void assignRightEpsilonToAll(int sizeForEpsilon){
-        String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
-        ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
+    public void assignRightEmptyToAll(int sizeForEmpty){
+        String empty = new String(new char[sizeForEmpty]).replace("\0", "ø,");
+        ArrayList emptyArray = new ArrayList(Arrays.asList(empty.split(",")));
         int index = -1;
-        for (ArrayList row: this.listForRightEpsilon()){
+        for (ArrayList row: this.listForRightEmpty()){
             if (index == -1){ index = this.getTransitions().indexOf(row); }
             if (index <= this.getTransitions().indexOf(row)){
-                this.getTransitions().get(index).addAll(epsilonArray);
+                this.getTransitions().get(index).addAll(emptyArray);
             }
             index++;
         }
         this.syncSize();
     }
 
-    public void assignRightEpsilonToRow(int sizeForEpsilon, int position){
-        if (sizeForEpsilon != 0){
-            String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
-            ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
-            this.transitions.get(position).addAll(epsilonArray);
+    public void assignRightEmptyToRow(int sizeForEmpty, int position){
+        if (sizeForEmpty != 0){
+            String empty = new String(new char[sizeForEmpty]).replace("\0", "ø,");
+            ArrayList emptyArray = new ArrayList(Arrays.asList(empty.split(",")));
+            this.transitions.get(position).addAll(emptyArray);
             this.syncSize();
         }
     }
 
-    public void assignLeftEpsilon(int sizeForEpsilon){
-        String epsilon = new String(new char[sizeForEpsilon]).replace("\0", "ø,");
-        ArrayList epsilonArray = new ArrayList(Arrays.asList(epsilon.split(",")));
-        this.transitions.add(this.transitions.size(), epsilonArray);
+    public void assignLeftEmpty(int sizeForEmpty){
+        String empty = new String(new char[sizeForEmpty]).replace("\0", "ø,");
+        ArrayList emptyArray = new ArrayList(Arrays.asList(empty.split(",")));
+        this.transitions.add(this.transitions.size(), emptyArray);
     }
 
     public int createUnionMachine(Robot machine){
         this.copyForUnionMachine(machine.getTransitions(), this.getTransitions().size());
         this.getTransitions().get(0).add("ε");
         int sizeLastPosition = this.getTransitions().get(this.getTransitions().size() - 1).size();
-        this.assignRightEpsilonToRow(sizeLastPosition - this.getTransitions().get(0).size(), 0);
+        this.assignRightEmptyToRow(sizeLastPosition - this.getTransitions().get(0).size(), 0);
         this.syncSize();
         return machine.getTransitions().size();
     }
@@ -117,7 +117,7 @@ public class Robot {
     public void squareUnionMachine(){
         int index = 0;
         for (ArrayList row : this.getTransitions()){
-            this.assignRightEpsilonToRow(this.getSizeColumn() - row.size(), index);
+            this.assignRightEmptyToRow(this.getSizeColumn() - row.size(), index);
             index++;
         }
     }
@@ -128,7 +128,7 @@ public class Robot {
             finalStates += finalState;
             this.getTransitions().get(finalStates).set(this.getSizeColumn() - 1, "ε");
         }
-        this.assignLeftEpsilon(this.getSizeColumn());
+        this.assignLeftEmpty(this.getSizeColumn());
         this.syncSize();
     }
 
@@ -138,7 +138,7 @@ public class Robot {
         }
     }
 
-    private List<ArrayList<String>> listForRightEpsilon(){
+    private List<ArrayList<String>> listForRightEmpty(){
         List<ArrayList<String>> subList;
         if (this.sizeRow != 1) {
             if (this.transitions.get(0).size() != this.transitions.get(1).size()) {
@@ -150,7 +150,7 @@ public class Robot {
 
     private void copyForUnionMachine(ArrayList<ArrayList<String>> list, int index){
         for (ArrayList subList: list){
-            this.assignLeftEpsilon(this.getTransitions().get(0).size());
+            this.assignLeftEmpty(this.getTransitions().get(0).size());
             this.getTransitions().get(index).addAll(subList);
             index++;
         }

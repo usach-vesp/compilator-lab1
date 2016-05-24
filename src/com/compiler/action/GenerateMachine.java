@@ -41,11 +41,11 @@ public class GenerateMachine implements ActionMachine{
         */
         Robot robot = new Robot();
         ArrayList<Integer> sizesMachines = new ArrayList();
-        robot.assignLeftEpsilon(1);
+        robot.assignLeftEmpty(1);
         for (Robot machine: machines){
             sizesMachines.add(robot.createUnionMachine(machine));
         }
-        robot.assignRightEpsilonToRow(1, 0);
+        robot.assignRightEmptyToRow(1, 0);
         robot.squareUnionMachine();
         robot.createLastTransitionUnion(sizesMachines);
         return robot;
@@ -72,14 +72,14 @@ public class GenerateMachine implements ActionMachine{
         Robot robot = new Robot();
         ArrayList<String> firstRow = new ArrayList<>(Arrays.asList("ø", "ε"));
         robot.assignRowTransition(0, firstRow);
-        robot.assignRightEpsilonToAll(machine.getTransitions().size() - 1);
+        robot.assignRightEmptyToAll(machine.getTransitions().size() - 1);
         robot.getTransitions().get(0).add("ε");
         for (int i = 0; i < machine.getSizeRow() - 1; i++){
-            robot.assignLeftEpsilon(2 + i);
+            robot.assignLeftEmpty(2 + i);
         }
         this.closureIntersection(robot, machine, 1, 2);
         robot.assignRowTransition(robot.getSizeRow(), firstRow);
-        robot.assignLeftEpsilon(robot.getSizeRow() + 1);
+        robot.assignLeftEmpty(robot.getSizeRow() + 1);
         robot.syncSize();
         return robot;
     }
@@ -98,9 +98,9 @@ public class GenerateMachine implements ActionMachine{
         Robot robot = new Robot();
 
         this.copyFirstMachine(robot, firstMachine);
-        this.addRightEpsilonIfNecessary(robot, secondMachine.getTransitions().get(0).size());
+        this.addRightEmptyIfNecessary(robot, secondMachine.getTransitions().get(0).size());
         for(ArrayList row: secondMachine.getTransitions()){
-            robot.assignLeftEpsilon(secondMachine.getSizeColumn());
+            robot.assignLeftEmpty(secondMachine.getSizeColumn());
             robot.assignColumnTransition(row.subList(1, row.size()));
         }
         return robot;
@@ -122,9 +122,9 @@ public class GenerateMachine implements ActionMachine{
         return subList;
     }
 
-    private void addRightEpsilonIfNecessary(Robot robot, int size){
+    private void addRightEmptyIfNecessary(Robot robot, int size){
         if (size > 0){
-            robot.assignRightEpsilonToAll(size - 1);
+            robot.assignRightEmptyToAll(size - 1);
         }
     }
 
@@ -132,7 +132,7 @@ public class GenerateMachine implements ActionMachine{
         if (robot.getTransitions().size() > row){
             robot.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
             robot.syncSize();
-            robot.assignRightEpsilonToRow(robot.getSizeColumn() - robot.getTransitions().get(row).size(), row);
+            robot.assignRightEmptyToRow(robot.getSizeColumn() - robot.getTransitions().get(row).size(), row);
             return this.closureIntersection(robot, machine, row+1, column+1);
         }
         return -1;

@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -113,14 +112,14 @@ public class RobotTest {
     }
 
     @Test
-    public void assignRightEpsilonToAll() throws Exception{
+    public void assignRightEmptyToAll() throws Exception{
         ArrayList arrayListOne = new ArrayList(Arrays.asList("0", "1"));
         ArrayList arrayListTwo = new ArrayList(Arrays.asList("2", "3"));
         robot.getTransitions().add(arrayListOne);
         robot.getTransitions().add(arrayListTwo);
         assertEquals(robot.getTransitions().get(0).size(), 2);
         assertEquals(robot.getTransitions().get(1).size(), 2);
-        robot.assignRightEpsilonToAll(1);
+        robot.assignRightEmptyToAll(1);
         assertEquals(robot.getTransitions().get(0).size(), 3);
         assertEquals(robot.getTransitions().get(1).size(), 3);
         assertEquals(robot.getTransitions().get(0).get(2), "ø");
@@ -128,19 +127,19 @@ public class RobotTest {
     }
 
     @Test
-    public void assignRightEpsilonToRow() throws Exception{
+    public void assignRightEmptyToRow() throws Exception{
         ArrayList arrayList = new ArrayList(Arrays.asList("0", "1"));
         robot.getTransitions().add(arrayList);
         assertEquals(robot.getTransitions().get(0).size(), 2);
-        robot.assignRightEpsilonToRow(2, 0);
+        robot.assignRightEmptyToRow(2, 0);
         assertEquals(robot.getTransitions().get(0).size(), 4);
         assertEquals(robot.getTransitions().get(0).get(2), "ø");
         assertEquals(robot.getTransitions().get(0).get(3), "ø");
     }
 
     @Test
-    public void assignLeftEpsilon() throws Exception{
-        robot.assignLeftEpsilon(2);
+    public void assignLeftEmpty() throws Exception{
+        robot.assignLeftEmpty(2);
         assertEquals(robot.getTransitions().get(0).size(), 2);
         assertEquals(robot.getTransitions().get(0).get(0), "ø");
         assertEquals(robot.getTransitions().get(0).get(1), "ø");
@@ -148,7 +147,7 @@ public class RobotTest {
 
     @Test
     public void createUnionMachine() throws Exception{
-        robot.assignLeftEpsilon(1);
+        robot.assignLeftEmpty(1);
         assertEquals(robot.createUnionMachine(generateMachine.base("a")), 2);
         assertEquals(robot.getTransitions().get(0), Arrays.asList("ø", "ε", "ø"));
         assertEquals(robot.getTransitions().get(1), Arrays.asList("ø", "ø", "a"));
