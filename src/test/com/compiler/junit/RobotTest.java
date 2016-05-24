@@ -189,4 +189,27 @@ public class RobotTest {
         assertEquals(robot.getTransitions().get(1).get(1), "ε");
     }
 
+    @Test
+    public void closureIntersection() throws Exception{
+
+    }
+
+    @Test
+    public void addRightEmptyIfNecessary() throws Exception{
+        ArrayList arrayList = new ArrayList(Arrays.asList("0", "1"));
+        robot.assignRowTransition(0, arrayList);
+        robot.addRightEmptyIfNecessary(0);
+        assertEquals(robot.getTransitions().size(), 1);
+        robot.addRightEmptyIfNecessary(3);
+        assertEquals(robot.getTransitions().get(0).size(), 4);
+    }
+
+    @Test
+    public void copyFirstMachine() throws Exception{
+        robot.copyFirstMachine(generateMachine.base("a"));
+        assertEquals(robot.getTransitions().get(0).size(), 2);
+        assertEquals(robot.getTransitions().get(0).get(0), "ø");
+        assertEquals(robot.getTransitions().get(0).get(1), "a");
+    }
+
 }

@@ -6,7 +6,6 @@ import com.compiler.template.ActionMachine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 public class GenerateMachine implements ActionMachine{
@@ -77,7 +76,7 @@ public class GenerateMachine implements ActionMachine{
         for (int i = 0; i < machine.getSizeRow() - 1; i++){
             robot.assignLeftEmpty(2 + i);
         }
-        this.closureIntersection(robot, machine, 1, 2);
+        robot.closureIntersection(machine, 1, 2);
         robot.assignRowTransition(robot.getSizeRow(), firstRow);
         robot.assignLeftEmpty(robot.getSizeRow() + 1);
         robot.syncSize();
@@ -97,8 +96,8 @@ public class GenerateMachine implements ActionMachine{
     private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
         Robot robot = new Robot();
 
-        this.copyFirstMachine(robot, firstMachine);
-        this.addRightEmptyIfNecessary(robot, secondMachine.getTransitions().get(0).size());
+        robot.copyFirstMachine(firstMachine);
+        robot.addRightEmptyIfNecessary(secondMachine.getTransitions().get(0).size());
         for(ArrayList row: secondMachine.getTransitions()){
             robot.assignLeftEmpty(secondMachine.getSizeColumn());
             robot.assignColumnTransition(row.subList(1, row.size()));
@@ -106,35 +105,4 @@ public class GenerateMachine implements ActionMachine{
         return robot;
     }
 
-    private void copyFirstMachine(Robot robot, Robot firstMachine){
-        for(ArrayList row: this.subListFromMachine(firstMachine.getSizeRow(), firstMachine.getTransitions())){
-            robot.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
-        }
-    }
-
-    private List<ArrayList<String>> subListFromMachine(int sizeRow, ArrayList<ArrayList<String>> list){
-        List<ArrayList<String>> subList;
-        if (sizeRow - 1 != 0){
-            subList = list.subList(0, sizeRow - 1);
-        }else {
-            subList = list.subList(0, sizeRow);
-        }
-        return subList;
-    }
-
-    private void addRightEmptyIfNecessary(Robot robot, int size){
-        if (size > 0){
-            robot.assignRightEmptyToAll(size - 1);
-        }
-    }
-
-    private int closureIntersection(Robot robot, Robot machine, int row, int column){
-        if (robot.getTransitions().size() > row){
-            robot.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
-            robot.syncSize();
-            robot.assignRightEmptyToRow(robot.getSizeColumn() - robot.getTransitions().get(row).size(), row);
-            return this.closureIntersection(robot, machine, row+1, column+1);
-        }
-        return -1;
-    }
 }

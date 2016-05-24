@@ -132,6 +132,28 @@ public class Robot {
         this.syncSize();
     }
 
+    public int closureIntersection(Robot machine, int row, int column){
+        if (this.getTransitions().size() > row){
+            this.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
+            this.syncSize();
+            this.assignRightEmptyToRow(this.getSizeColumn() - this.getTransitions().get(row).size(), row);
+            return this.closureIntersection(machine, row+1, column+1);
+        }
+        return -1;
+    }
+
+    public void addRightEmptyIfNecessary(int size){
+        if (size > 0){
+            this.assignRightEmptyToAll(size - 1);
+        }
+    }
+
+    public void copyFirstMachine(Robot firstMachine){
+        for(ArrayList row: this.subListFromMachine(firstMachine.getSizeRow(), firstMachine.getTransitions())){
+            this.assignRowTransition(firstMachine.getTransitions().indexOf(row), row);
+        }
+    }
+
     private void addTransition(int index){
         if (this.transitions.size() < index){
             this.transitions.add(index, new ArrayList<String>());
@@ -154,6 +176,16 @@ public class Robot {
             this.getTransitions().get(index).addAll(subList);
             index++;
         }
+    }
+
+    private List<ArrayList<String>> subListFromMachine(int sizeRow, ArrayList<ArrayList<String>> list){
+        List<ArrayList<String>> subList;
+        if (sizeRow - 1 != 0){
+            subList = list.subList(0, sizeRow - 1);
+        }else {
+            subList = list.subList(0, sizeRow);
+        }
+        return subList;
     }
 
 }
