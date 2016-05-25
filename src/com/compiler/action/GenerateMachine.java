@@ -10,8 +10,6 @@ import java.util.Arrays;
 
 public class GenerateMachine implements ActionMachine{
 
-
-
     @Override
     public Robot base(String letter) {
         /*
