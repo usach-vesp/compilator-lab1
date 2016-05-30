@@ -166,7 +166,6 @@ public class Robot {
     }
 
     private List<ArrayList<String>> listForRightEmpty(){
-        List<ArrayList<String>> subList;
         if (this.sizeRow != 1) {
             if (this.transitions.get(0).size() != this.transitions.get(1).size()) {
                 return this.transitions.subList(1, this.transitions.size());

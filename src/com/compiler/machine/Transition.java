@@ -1,7 +1,5 @@
 package com.compiler.machine;
 
-import com.compiler.machine.Robot;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

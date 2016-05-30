@@ -49,13 +49,13 @@ public class GenerateMachine implements ActionMachine{
     }
 
     @Override
-    public Robot intersection(Robot firstMachine, Robot secondMachine) {
+    public Robot intersection(ArrayList<Robot> robots) {
         /*
         * AB => ->O->aO->bO
         */
-        Robot robot = this.generateOneMachine(firstMachine, secondMachine);
-        robot.setStateInitial(firstMachine.getStateInitial());
-        robot.setStateFinal(secondMachine.getStateFinal());
+        Robot robot = this.generateOneMachine(robots);
+        robot.setStateInitial(robots.get(0).getStateInitial());
+        robot.setStateFinal(robots.get(robots.size() - 1).getStateFinal());
         robot.setStatesInitialFinal();
         return robot;
     }
@@ -83,14 +83,16 @@ public class GenerateMachine implements ActionMachine{
         return robot;
     }
 
-    private Robot generateOneMachine(Robot firstMachine, Robot secondMachine){
+    private Robot generateOneMachine(ArrayList<Robot> robots){
         Robot robot = new Robot();
 
-        robot.copyFirstMachine(firstMachine);
-        robot.addRightEmptyIfNecessary(secondMachine.getTransitions().get(0).size());
-        for(ArrayList row: secondMachine.getTransitions()){
-            robot.assignLeftEmpty(secondMachine.getSizeColumn());
-            robot.assignColumnTransition(row.subList(1, row.size()));
+        robot.copyFirstMachine(robots.get(0));
+        for (Robot robot1 : robots.subList(1, robots.size())){
+            robot.addRightEmptyIfNecessary(robot1.getTransitions().get(0).size());
+            for(ArrayList row: robot1.getTransitions()){
+                robot.assignLeftEmpty(robot1.getSizeColumn());
+                robot.assignColumnTransition(row.subList(1, row.size()));
+            }
         }
         return robot;
     }
