@@ -2,7 +2,7 @@ package test.com.compiler.junit;
 
 import com.compiler.action.GenerateMachine;
 import com.compiler.machine.Robot;
-import com.compiler.transition.Transition;
+import com.compiler.machine.Transition;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

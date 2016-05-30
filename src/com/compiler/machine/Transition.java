@@ -1,4 +1,4 @@
-package com.compiler.transition;
+package com.compiler.machine;
 
 import com.compiler.machine.Robot;
 
