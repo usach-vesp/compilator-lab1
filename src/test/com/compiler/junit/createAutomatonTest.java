@@ -8,13 +8,14 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
 public class CreateAutomatonTest {
 
-    CreateAutomaton automaton;
-    GenerateMachine generateMachine;
+    private CreateAutomaton automaton;
+    private GenerateMachine generateMachine;
 
     @Before
     public void setUp() throws Exception {
@@ -40,59 +41,47 @@ public class CreateAutomatonTest {
     public void addAllToArray() throws Exception {
         automaton.addAllToArray("ab");
         assertEquals(automaton.getWord(), Arrays.asList("a", "b"));
-        assertEquals(automaton.getOperations(), Arrays.asList());
-        automaton.addAllToArray("ab+cd");
-        assertEquals(automaton.getWord(), Arrays.asList("a", "b", "c", "d"));
-        assertEquals(automaton.getOperations(), Arrays.asList("+"));
-    }
-
-    @Test
-    public void regexToRobot() throws Exception {
-        automaton.startProcess("ab");
-        Robot robot = automaton.regexToRobot();
-        assertEquals(robot.getTransitions().size(), 3);
+        Robot robot = (Robot) automaton.getExpressionRobot().get(0);
+        assertEquals(automaton.getMachines().size(), 1);
         assertEquals(robot.getTransitions().get(0), Arrays.asList("ø", "a", "ø"));
         assertEquals(robot.getTransitions().get(1), Arrays.asList("ø", "ø", "b"));
         assertEquals(robot.getTransitions().get(2), Arrays.asList("ø", "ø", "ø"));
     }
 
     @Test
-    public void regexToRobotUnion() throws Exception {
-        automaton.startProcess("a+b");
-        Robot robot = automaton.regexToRobot();
-        assertEquals(robot.getTransitions().size(), 6);
-        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), robot.getTransitions().get(0));
-        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(1));
-        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(2));
-        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(3));
-        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(4));
-        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
+    public void addAllToArrayUnion() throws Exception {
+        automaton.addAllToArray("ab+cd");
+        assertEquals(automaton.getWord(), Arrays.asList("a", "b", "c", "d"));
+        Robot robotOne = (Robot) automaton.getExpressionRobot().get(0);
+        Robot robotTwo = (Robot) automaton.getExpressionRobot().get(2);
+        assertEquals(automaton.getExpressionRobot().size(), 3);
+        assertEquals(automaton.getExpressionRobot().get(1), "+");
+        assertEquals(robotOne.getTransitions().get(0), Arrays.asList("ø", "a", "ø"));
+        assertEquals(robotOne.getTransitions().get(1), Arrays.asList("ø", "ø", "b"));
+        assertEquals(robotOne.getTransitions().get(2), Arrays.asList("ø", "ø", "ø"));
+        assertEquals(robotTwo.getTransitions().get(0), Arrays.asList("ø", "c", "ø"));
+        assertEquals(robotTwo.getTransitions().get(1), Arrays.asList("ø", "ø", "d"));
+        assertEquals(robotTwo.getTransitions().get(2), Arrays.asList("ø", "ø", "ø"));
     }
 
     @Test
-    public void addIntersection() throws Exception {
-        ArrayList<ArrayList<Robot>> machines = new ArrayList<ArrayList<Robot>>();
-        machines.add(0, new ArrayList<Robot>(Arrays.asList(generateMachine.base("a"), generateMachine.base("b"))));
-        automaton.setMachines(machines);
-        automaton.addIntersection();
-        assertEquals(automaton.getIntersection().size(), 1);
-        assertEquals(automaton.getIntersection().get(0).getTransitions().get(0), Arrays.asList("ø", "a", "ø"));
-        assertEquals(automaton.getIntersection().get(0).getTransitions().get(1), Arrays.asList("ø", "ø", "b"));
-        assertEquals(automaton.getIntersection().get(0).getTransitions().get(2), Arrays.asList("ø", "ø", "ø"));
+    public void addExpressionRobot() throws Exception {
+        Robot robot = generateMachine.base("a");
+        automaton.addExpressionRobot(robot, "");
+        assertEquals(automaton.getExpressionRobot().size(), 1);
+        assertEquals(automaton.getExpressionRobot().get(0), robot);
     }
 
     @Test
-    public void addIntersectionWithUnion() throws Exception {
-        ArrayList<ArrayList<Robot>> machines = new ArrayList<ArrayList<Robot>>();
-        machines.add(0, new ArrayList<Robot>(Arrays.asList(generateMachine.base("a"))));
-        machines.add(1, new ArrayList<Robot>(Arrays.asList(generateMachine.base("c"))));
-        automaton.setMachines(machines);
-        automaton.addIntersection();
-        assertEquals(automaton.getIntersection().size(), 2);
-        assertEquals(automaton.getIntersection().get(0).getTransitions().get(0), Arrays.asList("ø", "a"));
-        assertEquals(automaton.getIntersection().get(0).getTransitions().get(1), Arrays.asList("ø", "ø"));
-        assertEquals(automaton.getIntersection().get(1).getTransitions().get(0), Arrays.asList("ø", "c"));
-        assertEquals(automaton.getIntersection().get(1).getTransitions().get(1), Arrays.asList("ø", "ø"));
+    public void addExpressionRobotUnion() throws Exception {
+        Robot robotOne = generateMachine.base("a");
+        Robot robotTwo = generateMachine.base("b");
+        automaton.addExpressionRobot(robotOne, "+");
+        automaton.addExpressionRobot(robotTwo, "");
+        assertEquals(automaton.getExpressionRobot().size(), 3);
+        assertEquals(automaton.getExpressionRobot().get(0), robotOne);
+        assertEquals(automaton.getExpressionRobot().get(1), "+");
+        assertEquals(automaton.getExpressionRobot().get(2), robotTwo);
     }
 
     @Test
