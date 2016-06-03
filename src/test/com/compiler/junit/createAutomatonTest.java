@@ -161,6 +161,28 @@ public class CreateAutomatonTest {
     }
 
     @Test
+    public void processClosure() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add("*");
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add("*");
+        automaton.setExpressionRobot(arrayList);
+        automaton.processClosure(2);
+        assertEquals(automaton.getExpressionRobot().size(), 3);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(3));
+
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(2)).getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b", "ø"), ((Robot) automaton.getExpressionRobot().get(2)).getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(2)).getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(2)).getTransitions().get(3));
+    }
+
+    @Test
     public void moveOperations() throws Exception {
         ArrayList<Object> arrayList = new ArrayList<>();
         arrayList.add("*");
@@ -184,6 +206,17 @@ public class CreateAutomatonTest {
         arrayList.add(")");
         automaton.setExpressionRobot(arrayList);
         assertEquals(automaton.countParenthesis(), 1);
+    }
+
+    @Test
+    public void countClosure() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("*");
+        arrayList.add("(");
+        arrayList.add("*");
+        arrayList.add(")");
+        automaton.setExpressionRobot(arrayList);
+        assertEquals(automaton.countClosure(), 2);
     }
 
     @Test

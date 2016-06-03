@@ -60,6 +60,7 @@ public class CreateAutomaton {
     public void startProcess(String input){
         this.addAllToArray(input);
         this.processParenthesis(this.countParenthesis());
+        this.processClosure(this.countClosure());
     }
 
     public void addAllToArray(String input){
@@ -99,6 +100,16 @@ public class CreateAutomaton {
         return countParenthesis;
     }
 
+    public int countClosure(){
+        int countClosure = 0;
+        for (Object element : this.expressionRobot){
+            if (element.equals("*")){
+                countClosure = countClosure + 1;
+            }
+        }
+        return countClosure;
+    }
+
     public void processParenthesis(int countParenthesis){
         if (countParenthesis != 0){
             int openParenthesis = this.expressionRobot.indexOf("(");
@@ -127,8 +138,14 @@ public class CreateAutomaton {
         }
     }
 
-    public void processClosure(){
-
+    public void processClosure(int countClosure){
+        if (countClosure != 0){
+            this .expressionRobot.add(generateMachine.closure((Robot) this.expressionRobot.get(this.expressionRobot.indexOf("*") - 1)));
+            this.expressionRobot.remove(this.expressionRobot.indexOf("*") - 1);
+            this.expressionRobot.remove(this.expressionRobot.indexOf("*"));
+            this.moveOperations();
+            this.processClosure(countClosure - 1);
+        }
     }
 
     private void addWord(String letter){
