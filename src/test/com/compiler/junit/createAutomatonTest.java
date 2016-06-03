@@ -183,6 +183,52 @@ public class CreateAutomatonTest {
     }
 
     @Test
+    public void processUnion() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("b"));
+        automaton.setExpressionRobot(arrayList);
+        Robot robot = automaton.processUnion();
+        assertEquals(robot.getSizeRow(), 6);
+        assertEquals(robot.getSizeColumn(), 6);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
+    }
+
+    @Test
+    public void processUnionWithIntersection() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add(generateMachine.base("b"));
+        automaton.setExpressionRobot(arrayList);
+        Robot robot = automaton.processUnion();
+        assertEquals(robot.getSizeColumn(), 3);
+        assertEquals(robot.getSizeRow(), 3);
+        assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø"), robot.getTransitions().get(2));
+    }
+
+    @Test
+    public void processUnionOneElement() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        automaton.setExpressionRobot(arrayList);
+        Robot robot = automaton.processUnion();
+        assertEquals(robot.getSizeColumn(), 2);
+        assertEquals(robot.getSizeRow(), 2);
+        assertEquals(robot.getTransitions().get(0).get(0), "ø");
+        assertEquals(robot.getTransitions().get(0).get(1), "a");
+        assertEquals(robot.getTransitions().get(1).get(0), "ø");
+        assertEquals(robot.getTransitions().get(1).get(1), "ø");
+    }
+
+    @Test
     public void moveOperations() throws Exception {
         ArrayList<Object> arrayList = new ArrayList<>();
         arrayList.add("*");

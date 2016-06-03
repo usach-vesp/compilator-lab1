@@ -57,10 +57,11 @@ public class CreateAutomaton {
         return parenthesis == 0;
     }
 
-    public void startProcess(String input){
+    public Robot startProcess(String input){
         this.addAllToArray(input);
         this.processParenthesis(this.countParenthesis());
         this.processClosure(this.countClosure());
+        return this.processUnion();
     }
 
     public void addAllToArray(String input){
@@ -146,6 +147,24 @@ public class CreateAutomaton {
             this.moveOperations();
             this.processClosure(countClosure - 1);
         }
+    }
+
+    public Robot processUnion(){
+        if (this.expressionRobot.indexOf("+") != -1) {
+            this.expressionRobot.removeAll(Collections.singleton("+"));
+            ArrayList<Robot> robots = new ArrayList<>();
+            for (Object element : this.expressionRobot) {
+                robots.add((Robot) element);
+            }
+            return generateMachine.union(robots);
+        }else if (this.expressionRobot.size() != 1){
+            ArrayList<Robot> robots = new ArrayList<>();
+            for (Object element : this.expressionRobot) {
+                robots.add((Robot) element);
+            }
+            return generateMachine.intersection(robots);
+        }
+        return (Robot) this.expressionRobot.get(0);
     }
 
     private void addWord(String letter){
