@@ -85,6 +85,108 @@ public class CreateAutomatonTest {
     }
 
     @Test
+    public void processParenthesis() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("(");
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add(")");
+        arrayList.add("*");
+        automaton.setExpressionRobot(arrayList);
+        automaton.processParenthesis(1);
+        assertEquals(automaton.getExpressionRobot().size(), 2);
+    }
+
+    @Test
+    public void processParenthesisWithUnion() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("(");
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add(")");
+        arrayList.add("*");
+        automaton.setExpressionRobot(arrayList);
+        automaton.processParenthesis(1);
+        assertEquals(automaton.getExpressionRobot().size(), 2);
+    }
+
+    @Test
+    public void processParenthesisWithThreeUnion() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("(");
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("c"));
+        arrayList.add(")");
+        arrayList.add("*");
+        automaton.setExpressionRobot(arrayList);
+        automaton.processParenthesis(1);
+        assertEquals(automaton.getExpressionRobot().size(), 2);
+    }
+
+    @Test
+    public void processParenthesisWithTwoParenthesis() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("(");
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add(")");
+        arrayList.add("*");
+        arrayList.add("+");
+        arrayList.add("(");
+        arrayList.add(generateMachine.base("c"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("d"));
+        arrayList.add(")");
+        arrayList.add("*");
+        automaton.setExpressionRobot(arrayList);
+        automaton.processParenthesis(2);
+        assertEquals(automaton.getExpressionRobot().size(), 5);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(0)).getTransitions().get(5));
+
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "c", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "d", "ø"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), ((Robot) automaton.getExpressionRobot().get(3)).getTransitions().get(5));
+    }
+
+    @Test
+    public void moveOperations() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("*");
+        arrayList.add("+");
+        arrayList.add("(");
+        arrayList.add("");
+        arrayList.add(")");
+        assertEquals(arrayList, Arrays.asList("*", "+", "(", "", ")"));
+        automaton.setExpressionRobot(arrayList);
+        automaton.moveOperations();
+        assertEquals(arrayList, Arrays.asList("(", "", ")", "*", "+"));
+    }
+
+    @Test
+    public void countParenthesis() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("*");
+        arrayList.add("+");
+        arrayList.add("(");
+        arrayList.add("");
+        arrayList.add(")");
+        automaton.setExpressionRobot(arrayList);
+        assertEquals(automaton.countParenthesis(), 1);
+    }
+
+    @Test
     public void addToMachine() throws Exception {
         automaton.addToMachine("a", 0);
         automaton.addToMachine("b", 0);

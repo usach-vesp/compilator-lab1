@@ -4,6 +4,8 @@ import com.compiler.machine.Robot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CreateAutomaton {
 
@@ -57,6 +59,7 @@ public class CreateAutomaton {
 
     public void startProcess(String input){
         this.addAllToArray(input);
+        this.processParenthesis(this.countParenthesis());
     }
 
     public void addAllToArray(String input){
@@ -84,6 +87,48 @@ public class CreateAutomaton {
         if (!operation.equals("")){
             this.expressionRobot.add(operation);
         }
+    }
+
+    public int countParenthesis(){
+        int countParenthesis = 0;
+        for (Object element : this.expressionRobot){
+            if (element.equals("(")){
+                countParenthesis = countParenthesis + 1;
+            }
+        }
+        return countParenthesis;
+    }
+
+    public void processParenthesis(int countParenthesis){
+        if (countParenthesis != 0){
+            int openParenthesis = this.expressionRobot.indexOf("(");
+            int closeParenthesis = this.expressionRobot.indexOf(")");
+            List<Object> subList = this.expressionRobot.subList(openParenthesis, closeParenthesis + 1);
+            if (subList.size() != 1){
+                ArrayList<Robot> robots = new ArrayList<>();
+                for (Object element : subList){
+                    if (this.isLetter(element.toString())){
+                        robots.add((Robot) element);
+                    }
+                }
+                subList.clear();
+                this.expressionRobot.add(generateMachine.union(robots));
+                this.moveOperations();
+            }
+            this.processParenthesis(countParenthesis - 1);
+        }
+    }
+
+    public void moveOperations(){
+        if (this.expressionRobot.get(0).equals("*") || this.expressionRobot.get(0).equals("+")){
+            this.expressionRobot.add(this.expressionRobot.get(0));
+            this.expressionRobot.remove(0);
+            this.moveOperations();
+        }
+    }
+
+    public void processClosure(){
+
     }
 
     private void addWord(String letter){
