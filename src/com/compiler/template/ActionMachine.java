@@ -1,20 +1,18 @@
 package com.compiler.template;
 
 
-import java.util.HashMap;
+import com.compiler.machine.Robot;
+
+import java.util.ArrayList;
 
 public interface ActionMachine {
 
-    public HashMap standard(HashMap<String, String> robot, String letter);
+    public Robot base(String letter);
 
-    public void union();
+    public Robot union(ArrayList<Robot> machines);
 
-    public HashMap intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine);
+    public Robot intersection(ArrayList<Robot> robots);
 
-    public void closure();
-
-    public void remove();
-
-    public void numberState();
+    public Robot closure(Robot machine);
 
 }

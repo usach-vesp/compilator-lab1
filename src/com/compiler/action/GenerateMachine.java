@@ -1,80 +1,100 @@
 package com.compiler.action;
 
 
+import com.compiler.machine.Robot;
 import com.compiler.template.ActionMachine;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class GenerateMachine implements ActionMachine{
 
     @Override
-    public HashMap standard(HashMap<String, String> robot, String letter) {
+    public Robot base(String letter) {
         /*
         * A => ->O->O
         */
-        robot.put("ø", letter);
-        robot.put(letter, "ø");
-        this.initialState(robot, "ø");
-        this.finalState(robot, letter);
+        Robot robot = new Robot();
+        ArrayList<String> transitionOne = new ArrayList<>();
+        ArrayList<String> transitionTwo = new ArrayList<>();
+        transitionOne.add(0, "ø");
+        transitionOne.add(1, letter);
+        transitionTwo.add(0, "ø");
+        transitionTwo.add(1, "ø");
+        robot.assignRowTransition(0, transitionOne);
+        robot.assignRowTransition(1, transitionTwo);
+        robot.syncSize();
+        robot.setStatesInitialFinal();
         return robot;
     }
 
     @Override
-    public void union() {
+    public Robot union(ArrayList<Robot> machines) {
         /*
         * A + b => O ->O->O
         *            ->O->O
         */
-
-    }
-
-    @Override
-    public HashMap intersection(HashMap<String, String> firstMachine, HashMap<String, String> secondMachine) {
-        /*
-        * AB => ->O->aO->bO
-        */
-        HashMap<String, String> robot = new HashMap<>();
-        String stateFinal = firstMachine.get("final");
-        String stateInitial = secondMachine.get("initial");
-        for (String temporal: firstMachine.keySet()){
-            robot.put(temporal, firstMachine.get(temporal));
+        Robot robot = new Robot();
+        ArrayList<Integer> sizesMachines = new ArrayList();
+        robot.assignLeftEmpty(1);
+        for (Robot machine: machines){
+            sizesMachines.add(robot.createUnionMachine(machine));
         }
-        robot.put(stateFinal, stateInitial);
-        for (String temporal: secondMachine.keySet()){
-            robot.put(temporal, secondMachine.get(temporal));
-        }
-        robot.put("initial", firstMachine.get("initial"));
-        robot.put("final", secondMachine.get("final"));
+        robot.assignRightEmptyToRow(1, 0);
+        robot.squareUnionMachine();
+        robot.createLastTransitionUnion(sizesMachines);
+        robot.setStatesInitialFinal();
         return robot;
     }
 
     @Override
-    public void closure() {
+    public Robot intersection(ArrayList<Robot> robots) {
+        /*
+        * AB => ->O->aO->bO
+        */
+        Robot robot = this.generateOneMachine(robots);
+        robot.setStateInitial(robots.get(0).getStateInitial());
+        robot.setStateFinal(robots.get(robots.size() - 1).getStateFinal());
+        robot.setStatesInitialFinal();
+        return robot;
+    }
+
+    @Override
+    public Robot closure(Robot machine) {
         /*
         *                  <-e
         * (A)* => e->Oe->eO->aO->eO->eO
         *                  e->
         */
-
-    }
-
-    @Override
-    public void remove() {
-
-    }
-
-    private HashMap finalState(HashMap<String, String> robot, String finalState) {
-        robot.put("final", finalState);
+        Robot robot = new Robot();
+        ArrayList<String> firstRow = new ArrayList<>(Arrays.asList("ø", "ε"));
+        robot.assignRowTransition(0, firstRow);
+        robot.assignRightEmptyToAll(machine.getTransitions().size() - 1);
+        robot.getTransitions().get(0).add("ε");
+        for (int i = 0; i < machine.getSizeRow() - 1; i++){
+            robot.assignLeftEmpty(2 + i);
+        }
+        robot.closureIntersection(machine, 1, 2);
+        robot.assignRowTransition(robot.getSizeRow(), firstRow);
+        robot.assignLeftEmpty(robot.getSizeRow() + 1);
+        robot.syncSize();
+        robot.setStatesInitialFinal();
         return robot;
     }
 
-    private HashMap initialState(HashMap<String, String> robot, String initialState) {
-        robot.put("initial", initialState);
+    private Robot generateOneMachine(ArrayList<Robot> robots){
+        Robot robot = new Robot();
+
+        robot.copyFirstMachine(robots.get(0));
+        for (Robot robot1 : robots.subList(1, robots.size())){
+            robot.addRightEmptyIfNecessary(robot1.getTransitions().get(0).size());
+            for(ArrayList row: robot1.getTransitions()){
+                robot.assignLeftEmpty(robot.getTransitions().get(0).size() - (robot1.getSizeColumn() - 1));
+                robot.assignColumnTransition(row.subList(1, row.size()));
+            }
+        }
         return robot;
     }
 
-    @Override
-    public void numberState() {
-
-    }
 }
