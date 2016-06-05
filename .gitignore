@@ -6,3 +6,6 @@ out
 
 # mac always generaty .DS_Store
 .DS_Store
+
+#not include .dot files
+*.dot

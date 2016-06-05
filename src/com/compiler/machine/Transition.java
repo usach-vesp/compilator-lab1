@@ -10,12 +10,14 @@ public class Transition {
     ArrayList<ArrayList<Integer>> transitions;
     ArrayList<HashMap<String, ArrayList<Integer>>> newStates;
     ArrayList<ArrayList<String>> afd;
+    ArrayList<String> finalState;
 
     public Transition(){
         this.transitions = new ArrayList<ArrayList<Integer>>();
         this.transitions.add(new ArrayList<Integer>(Arrays.asList(0)));
         this.newStates = new ArrayList<HashMap<String, ArrayList<Integer>>>();
         this.afd = new ArrayList<ArrayList<String>>();
+        this.finalState = new ArrayList<>();
     }
 
     public ArrayList<ArrayList<Integer>> getTransitions() {
@@ -30,10 +32,21 @@ public class Transition {
         return afd;
     }
 
+    public ArrayList<String> getFinalState() {
+        return finalState;
+    }
+
     public void turnToDeterministic(Robot robot, ArrayList<String> words){
         this.searchFirstState(robot, 0);
         this.searchStates(robot, words, 0);
         this.turnToAFD(words, 0);
+        int index = 0;
+        for (ArrayList row : this.transitions){
+            if (row.indexOf(Integer.parseInt(robot.getStateFinal())) != -1){
+                this.finalState.add(String.valueOf(index));
+            }
+            index = index + 1;
+        }
     }
 
     private void turnToAFD(ArrayList<String> words, int index){

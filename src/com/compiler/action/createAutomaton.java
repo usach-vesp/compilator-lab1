@@ -1,7 +1,11 @@
 package com.compiler.action;
 
 import com.compiler.machine.Robot;
+import com.compiler.machine.Transition;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,12 +61,41 @@ public class CreateAutomaton {
         return parenthesis == 0;
     }
 
-    public Robot startProcess(String input){
+    public Robot startProcess(String input) throws FileNotFoundException, UnsupportedEncodingException {
+        Robot afnd = new Robot();
+        Transition transition = new Transition();
         this.addAllToArray(input);
         this.processParenthesis(this.countSignal("("));
         this.processClosure(this.countSignal("*"));
         this.processIntersection();
-        return this.processUnion();
+        afnd = this.processUnion();
+        afnd.syncSize();
+        this.writeDotFile(afnd.getTransitions(), "AFND", new ArrayList<String>(Arrays.asList(afnd.getStateFinal())));
+        transition.turnToDeterministic(afnd, this.word);
+        this.writeDotFile(transition.getAfd(), "AFD", transition.getFinalState());
+        return afnd;
+    }
+
+    private void writeDotFile(ArrayList<ArrayList<String>> transitions, String filename, ArrayList<String> finalState) throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter writer = new PrintWriter(filename + ".dot", "UTF-8");
+        writer.println("digraph G {");
+        int row = 0;
+        for (ArrayList rowTransition : transitions){
+            int column = 0;
+            for (Object columnElement : rowTransition){
+                if (!columnElement.toString().equals("ø")){
+//                    shape = doublecircle
+                    writer.println(row + " -> " + column + " [label="+ "\""+ columnElement + "\"" +"]; ");
+                }
+                column = column + 1;
+            }
+            row = row + 1;
+        }
+        for (String state : finalState){
+            writer.println(state + " [shape = doublecircle];");
+        }
+        writer.println("}");
+        writer.close();
     }
 
     public void addAllToArray(String input){
