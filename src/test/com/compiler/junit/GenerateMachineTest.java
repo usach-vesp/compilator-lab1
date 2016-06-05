@@ -118,7 +118,7 @@ public class GenerateMachineTest extends GenerateMachine {
         Robot secondMachine;
         firstMachine = generateMachine.base("a");
         secondMachine = generateMachine.base("b");
-        robot = generateMachine.intersection(firstMachine, secondMachine);
+        robot = generateMachine.intersection(new ArrayList<Robot>(Arrays.asList(firstMachine, secondMachine)));
         assertEquals(robot.getStateInitial(), "0");
         assertEquals(robot.getStateFinal(), "3");
         assertEquals(robot.getSizeColumn(), 3);
@@ -147,7 +147,7 @@ public class GenerateMachineTest extends GenerateMachine {
         Robot secondMachine;
         firstMachine = generateMachine.base("a");
         secondMachine = generateMachine.base("b");
-        robot = generateMachine.closure(generateMachine.intersection(firstMachine, secondMachine));
+        robot = generateMachine.closure(generateMachine.intersection(new ArrayList<Robot>(Arrays.asList(firstMachine, secondMachine))));
         assertEquals(robot.getSizeRow(), 5);
         assertEquals(robot.getSizeColumn(), 5);
         assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ε"), robot.getTransitions().get(0));
@@ -161,7 +161,7 @@ public class GenerateMachineTest extends GenerateMachine {
     public void TwoClosureIntersection() throws Exception{
         Robot firstMachine = generateMachine.closure(generateMachine.base("a"));
         Robot secondMachine = generateMachine.closure(generateMachine.base("b"));
-        robot = generateMachine.intersection(firstMachine, secondMachine);
+        robot = generateMachine.intersection(new ArrayList<Robot>(Arrays.asList(firstMachine, secondMachine)));
         assertEquals(robot.getSizeRow(), 7);
         assertEquals(robot.getSizeColumn(), 7);
         assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(0));
@@ -171,6 +171,22 @@ public class GenerateMachineTest extends GenerateMachine {
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(4));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ε", "ø", "ε"), robot.getTransitions().get(5));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(6));
+    }
+
+    @Test
+    public void closureWithUnion() throws Exception {
+        Robot union = generateMachine.union(new ArrayList<Robot>(Arrays.asList(generateMachine.base("a"), generateMachine.base("b"))));
+        robot = generateMachine.closure(union);
+        assertEquals(robot.getSizeRow(), 8);
+        assertEquals(robot.getSizeColumn(), 8);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "ε", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "a", "ø", "ø", "ø", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "b", "ø", "ø"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø"), robot.getTransitions().get(5));
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(6));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(7));
     }
 
 }

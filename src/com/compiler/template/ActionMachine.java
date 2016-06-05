@@ -11,7 +11,7 @@ public interface ActionMachine {
 
     public Robot union(ArrayList<Robot> machines);
 
-    public Robot intersection(Robot firstMachine, Robot secondMachine);
+    public Robot intersection(ArrayList<Robot> robots);
 
     public Robot closure(Robot machine);
 
