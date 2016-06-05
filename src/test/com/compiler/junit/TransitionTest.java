@@ -25,6 +25,7 @@ public class TransitionTest {
         ArrayList<Robot> machines = new ArrayList<Robot>(Arrays.asList(generateMachine.base("a"),
                 generateMachine.base("b")));
         robot = generateMachine.union(machines);
+        robot.syncSize();
     }
 
     @After

@@ -63,6 +63,7 @@ public class Robot {
     public void syncSize(){
         this.sizeRow = this.transitions.size();
         this.sizeColumn = this.transitions.get(0).size();
+        this.stateFinal = String.valueOf(this.transitions.size() - 1);
     }
 
     public void assignRowTransition(int index, ArrayList transitions){

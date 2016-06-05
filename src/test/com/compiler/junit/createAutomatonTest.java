@@ -63,6 +63,7 @@ public class CreateAutomatonTest {
         assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
         assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
         assertEquals(Arrays.asList("ø", "ø", "ø"), robot.getTransitions().get(2));
+        assertEquals(robot.getStateFinal(), "2");
     }
 
     @Test
@@ -75,6 +76,7 @@ public class CreateAutomatonTest {
         assertEquals(Arrays.asList("ø", "ø", "ø", "c", "ø"), robot.getTransitions().get(2));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "d"), robot.getTransitions().get(3));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(4));
+        assertEquals(robot.getStateFinal(), "4");
     }
 
     @Test
@@ -88,6 +90,7 @@ public class CreateAutomatonTest {
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(3));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(4));
         assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
+        assertEquals(robot.getStateFinal(), "5");
     }
 
     @Test
