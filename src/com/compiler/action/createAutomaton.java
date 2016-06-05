@@ -59,8 +59,9 @@ public class CreateAutomaton {
 
     public Robot startProcess(String input){
         this.addAllToArray(input);
-        this.processParenthesis(this.countParenthesis());
-        this.processClosure(this.countClosure());
+        this.processParenthesis(this.countSignal("("));
+        this.processClosure(this.countSignal("*"));
+        this.processIntersection();
         return this.processUnion();
     }
 
@@ -71,8 +72,12 @@ public class CreateAutomaton {
                 this.addWord(signal);
                 this.addToMachine(signal, index);
             }else{
-                this.addExpressionRobot(this.getIntersection(index), signal);
-                index = index + 1;
+                if (this.machines.size() == index){
+                    this.expressionRobot.add(signal);
+                }else{
+                    this.addExpressionRobot(this.getIntersection(index), signal);
+                    index = index + 1;
+                }
             }
         }
         if (this.machines.size() > index){
@@ -81,7 +86,10 @@ public class CreateAutomaton {
     }
 
     private Robot getIntersection(int index){
-        return generateMachine.intersection(this.machines.get(index));
+        if (this.machines.get(index).size() != 1){
+            return generateMachine.intersection(this.machines.get(index));
+        }
+        return this.machines.get(index).get(0);
     }
 
     public void addExpressionRobot(Robot robot, String operation){
@@ -91,24 +99,14 @@ public class CreateAutomaton {
         }
     }
 
-    public int countParenthesis(){
-        int countParenthesis = 0;
+    public int countSignal(String signal){
+        int count = 0;
         for (Object element : this.expressionRobot){
-            if (element.equals("(")){
-                countParenthesis = countParenthesis + 1;
+            if (element.equals(signal)){
+                count = count + 1;
             }
         }
-        return countParenthesis;
-    }
-
-    public int countClosure(){
-        int countClosure = 0;
-        for (Object element : this.expressionRobot){
-            if (element.equals("*")){
-                countClosure = countClosure + 1;
-            }
-        }
-        return countClosure;
+        return count;
     }
 
     public void processParenthesis(int countParenthesis){
@@ -116,6 +114,7 @@ public class CreateAutomaton {
             int openParenthesis = this.expressionRobot.indexOf("(");
             int closeParenthesis = this.expressionRobot.indexOf(")");
             List<Object> subList = this.expressionRobot.subList(openParenthesis, closeParenthesis + 1);
+            int indexAdd = subList.indexOf("+");
             if (subList.size() != 1){
                 ArrayList<Robot> robots = new ArrayList<>();
                 for (Object element : subList){
@@ -124,28 +123,58 @@ public class CreateAutomaton {
                     }
                 }
                 subList.clear();
-                this.expressionRobot.add(generateMachine.union(robots));
-                this.moveOperations();
+                if (indexAdd != -1){
+                    this.expressionRobot.add(generateMachine.union(robots));
+                }else{
+                    this.expressionRobot.add(robots.get(0));
+                }
+                this.moveOperations(openParenthesis, (Robot) this.expressionRobot.get(this.expressionRobot.size() - 1));
             }
             this.processParenthesis(countParenthesis - 1);
         }
     }
 
-    public void moveOperations(){
-        if (this.expressionRobot.get(0).equals("*") || this.expressionRobot.get(0).equals("+")){
-            this.expressionRobot.add(this.expressionRobot.get(0));
-            this.expressionRobot.remove(0);
-            this.moveOperations();
+    public void moveOperations(int openParenthesis, Robot lastRobot){
+        if ((this.expressionRobot.get(openParenthesis).equals("*") || this.expressionRobot.get(openParenthesis).equals("+")
+        )   || this.expressionRobot.get(openParenthesis) != lastRobot){
+//                ){
+            this.expressionRobot.add(this.expressionRobot.get(openParenthesis));
+            this.expressionRobot.remove(openParenthesis);
+            this.moveOperations(openParenthesis, lastRobot);
         }
     }
 
     public void processClosure(int countClosure){
         if (countClosure != 0){
+            int indexClosure = this.expressionRobot.indexOf("*");
             this .expressionRobot.add(generateMachine.closure((Robot) this.expressionRobot.get(this.expressionRobot.indexOf("*") - 1)));
             this.expressionRobot.remove(this.expressionRobot.indexOf("*") - 1);
             this.expressionRobot.remove(this.expressionRobot.indexOf("*"));
-            this.moveOperations();
+            this.moveOperations(indexClosure - 1, (Robot) this.expressionRobot.get(this.expressionRobot.size() - 1));
             this.processClosure(countClosure - 1);
+        }
+    }
+
+    public void processIntersection(){
+        if ((this.countSignal("+") + 1) != (this.expressionRobot.size() - this.countSignal("+"))){
+            ArrayList<Robot> robots = new ArrayList<>();
+            int index = 0;
+            for (Object robot : this.expressionRobot){
+                if (this.isLetter(robot.toString())){
+                    robots.add((Robot) robot);
+                }else{
+                    if (robots.size() != 1){
+                        break;
+                    }else{
+                        index = index + 1;
+                        robots.clear();
+                    }
+                }
+            }
+            this.expressionRobot.add(generateMachine.intersection(robots));
+            this.expressionRobot.removeAll(robots);
+            this.moveOperations(index + index, (Robot) this.expressionRobot.get(this.expressionRobot.size() - 1));
+            this.processIntersection();
         }
     }
 

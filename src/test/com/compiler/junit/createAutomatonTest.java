@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +34,126 @@ public class CreateAutomatonTest {
         assertEquals(automaton.isValid("(A+c)+B"), true);
         assertEquals(automaton.isValid("(A+c)*"), true);
         assertEquals(automaton.isValid("abc(abc+abc)+abc"), true);
+    }
+
+    @Test
+    public void startProcess() throws Exception {
+        Robot robot = automaton.startProcess("a");
+        assertEquals(robot.getTransitions().get(0).get(0), "ø");
+        assertEquals(robot.getTransitions().get(0).get(1), "a");
+        assertEquals(robot.getTransitions().get(1).get(0), "ø");
+        assertEquals(robot.getTransitions().get(1).get(1), "ø");
+    }
+
+    @Test
+    public void startProcessAB() throws Exception {
+        Robot robot = automaton.startProcess("ab");
+        assertEquals(robot.getSizeColumn(), 3);
+        assertEquals(robot.getSizeRow(), 3);
+        assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø"), robot.getTransitions().get(2));
+    }
+
+    @Test
+    public void startProcessParenthesisAB() throws Exception {
+        Robot robot = automaton.startProcess("(ab)");
+        assertEquals(robot.getSizeColumn(), 3);
+        assertEquals(robot.getSizeRow(), 3);
+        assertEquals(Arrays.asList("ø", "a", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø"), robot.getTransitions().get(2));
+    }
+
+    @Test
+    public void startProcessTwoParenthesisAB() throws Exception {
+        Robot robot = automaton.startProcess("(ab)(cd)");
+        assertEquals(robot.getSizeColumn(), 5);
+        assertEquals(robot.getSizeRow(), 5);
+        assertEquals(Arrays.asList("ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "b", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "c", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "d"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(4));
+    }
+
+    @Test
+    public void startProcessTwoAAddB() throws Exception {
+        Robot robot = automaton.startProcess("a+b");
+        assertEquals(robot.getSizeRow(), 6);
+        assertEquals(robot.getSizeColumn(), 6);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ε", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
+    }
+
+    @Test
+    public void startProcessTwoWordWithIntersectionClosure() throws Exception {
+        Robot robot = automaton.startProcess("a(b)*");
+        assertEquals(robot.getSizeRow(), 5);
+        assertEquals(robot.getSizeColumn(), 5);
+        assertEquals(Arrays.asList("ø", "a", "ø", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "ε", "ø", "ε"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "b", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ε", "ø", "ε"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(4));
+    }
+
+    @Test
+    public void startProcessThreeWordWithUnion() throws Exception {
+        Robot robot = automaton.startProcess("(a+b)+c");
+        assertEquals(robot.getSizeRow(), 10);
+        assertEquals(robot.getSizeColumn(), 10);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "ε", "ø", "ε", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "a", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "b", "ø", "ø", "ø", "ø"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(5));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(6));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "c", "ø"), robot.getTransitions().get(7));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(8));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(9));
+    }
+
+    @Test
+    public void startProcessTwoWordWithUnionAndClausure() throws Exception {
+        Robot robot = automaton.startProcess("(a+b)*");
+        assertEquals(robot.getSizeRow(), 8);
+        assertEquals(robot.getSizeColumn(), 8);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "ε", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "a", "ø", "ø", "ø", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "b", "ø", "ø"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø"), robot.getTransitions().get(5));
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(6));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(7));
+    }
+
+    @Test
+    public void startProcessTwoWordWithIntersectionUnionAndClausure() throws Exception {
+        Robot robot = automaton.startProcess("ab(cd+ef)+gh");
+        assertEquals(robot.getSizeRow(), 15);
+        assertEquals(robot.getSizeColumn(), 15);
+        assertEquals(Arrays.asList("ø", "ε", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø", "ø"), robot.getTransitions().get(0));
+        assertEquals(Arrays.asList("ø", "ø", "a", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(1));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "b", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(2));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ε", "ø", "ø", "ε", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(3));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "c", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(4));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "d", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(5));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø", "ø", "ø"), robot.getTransitions().get(6));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "e", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(7));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "f", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(8));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε", "ø", "ø", "ø", "ø"), robot.getTransitions().get(9));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(10));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "g", "ø", "ø"), robot.getTransitions().get(11));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "h", "ø"), robot.getTransitions().get(12));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ε"), robot.getTransitions().get(13));
+        assertEquals(Arrays.asList("ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø", "ø"), robot.getTransitions().get(14));
     }
 
     @Test
@@ -183,6 +302,31 @@ public class CreateAutomatonTest {
     }
 
     @Test
+    public void processIntersection() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("c"));
+        automaton.setExpressionRobot(arrayList);
+        automaton.processIntersection();
+        assertEquals(automaton.getExpressionRobot().size(), 3);
+    }
+
+    @Test
+    public void processIntersectionTwo() throws Exception {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(generateMachine.base("a"));
+        arrayList.add(generateMachine.base("b"));
+        arrayList.add("+");
+        arrayList.add(generateMachine.base("c"));
+        arrayList.add(generateMachine.base("d"));
+        automaton.setExpressionRobot(arrayList);
+        automaton.processIntersection();
+        assertEquals(automaton.getExpressionRobot().size(), 3);
+    }
+
+    @Test
     public void processUnion() throws Exception {
         ArrayList<Object> arrayList = new ArrayList<>();
         arrayList.add(generateMachine.base("a"));
@@ -230,16 +374,28 @@ public class CreateAutomatonTest {
 
     @Test
     public void moveOperations() throws Exception {
+        Robot robot = generateMachine.base("a");
         ArrayList<Object> arrayList = new ArrayList<>();
         arrayList.add("*");
         arrayList.add("+");
-        arrayList.add("(");
-        arrayList.add("");
-        arrayList.add(")");
-        assertEquals(arrayList, Arrays.asList("*", "+", "(", "", ")"));
+        arrayList.add(robot);
+        assertEquals(arrayList, Arrays.asList("*", "+", robot));
         automaton.setExpressionRobot(arrayList);
-        automaton.moveOperations();
-        assertEquals(arrayList, Arrays.asList("(", "", ")", "*", "+"));
+        automaton.moveOperations(0, robot);
+        assertEquals(arrayList, Arrays.asList(robot, "*", "+"));
+    }
+
+    @Test
+    public void moveOperationsWithIndexOne() throws Exception {
+        Robot robot = generateMachine.base("a");
+        ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("*");
+        arrayList.add("+");
+        arrayList.add(robot);
+        assertEquals(arrayList, Arrays.asList("*", "+", robot));
+        automaton.setExpressionRobot(arrayList);
+        automaton.moveOperations(1, robot);
+        assertEquals(arrayList, Arrays.asList("*", robot, "+"));
     }
 
     @Test
@@ -251,7 +407,7 @@ public class CreateAutomatonTest {
         arrayList.add("");
         arrayList.add(")");
         automaton.setExpressionRobot(arrayList);
-        assertEquals(automaton.countParenthesis(), 1);
+        assertEquals(automaton.countSignal("("), 1);
     }
 
     @Test
@@ -262,7 +418,7 @@ public class CreateAutomatonTest {
         arrayList.add("*");
         arrayList.add(")");
         automaton.setExpressionRobot(arrayList);
-        assertEquals(automaton.countClosure(), 2);
+        assertEquals(automaton.countSignal("*"), 2);
     }
 
     @Test

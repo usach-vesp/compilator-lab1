@@ -134,7 +134,7 @@ public class Robot {
 
     public int closureIntersection(Robot machine, int row, int column){
         if (this.getTransitions().size() > row){
-            this.getTransitions().get(row).add(column, machine.getTransitions().get(row-1).get(column-1));
+            this.getTransitions().get(row).addAll(column, machine.getTransitions().get(row-1).subList(column-1, machine.getTransitions().size()));
             this.syncSize();
             this.assignRightEmptyToRow(this.getSizeColumn() - this.getTransitions().get(row).size(), row);
             return this.closureIntersection(machine, row+1, column+1);

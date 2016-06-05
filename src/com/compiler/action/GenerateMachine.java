@@ -90,7 +90,7 @@ public class GenerateMachine implements ActionMachine{
         for (Robot robot1 : robots.subList(1, robots.size())){
             robot.addRightEmptyIfNecessary(robot1.getTransitions().get(0).size());
             for(ArrayList row: robot1.getTransitions()){
-                robot.assignLeftEmpty(robot1.getSizeColumn());
+                robot.assignLeftEmpty(robot.getTransitions().get(0).size() - (robot1.getSizeColumn() - 1));
                 robot.assignColumnTransition(row.subList(1, row.size()));
             }
         }
